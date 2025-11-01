@@ -1,6 +1,5 @@
 package com.apps.medilab.requests;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 import com.apps.medilab.enums.MedicalCaseStatus;

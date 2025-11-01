@@ -3,18 +3,14 @@ package com.apps.medilab.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.apps.medilab.model.Department;
-import com.apps.medilab.model.Doctor;
 import com.apps.medilab.model.MedicalCase;
 import com.apps.medilab.repository.DoctorRepository;
-import com.apps.medilab.requests.DepartmentRequestDTO;
 import com.apps.medilab.requests.MedicalCaseRequestDTO;
 import com.apps.medilab.response.ApiResponse;
 import com.apps.medilab.service.MedicalCaseService;
 
 import lombok.AllArgsConstructor;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 

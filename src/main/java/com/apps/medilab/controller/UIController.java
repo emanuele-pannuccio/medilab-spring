@@ -4,7 +4,6 @@ import com.apps.medilab.enums.MedicalCaseStatus;
 import com.apps.medilab.model.Doctor;
 import com.apps.medilab.model.MedicalCase;
 import com.apps.medilab.repository.DoctorRepository;
-import com.apps.medilab.requests.AuthRequestDTO;
 import com.apps.medilab.service.DepartmentService;
 import com.apps.medilab.service.DoctorService;
 import com.apps.medilab.service.MedicalCaseService;
@@ -17,18 +16,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
@@ -44,8 +39,6 @@ public class UIController {
     private final DepartmentService departmentService;
 
     private final MedicalCaseService medicalCaseService;
-
-    private final AuthenticationManager authenticationManager;
 
     @GetMapping("/login")
     public String login(Model model) {
