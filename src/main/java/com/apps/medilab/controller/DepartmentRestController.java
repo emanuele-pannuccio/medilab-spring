@@ -4,12 +4,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.apps.medilab.model.Department;
+import com.apps.medilab.requests.DepartmentRequestDTO;
+import com.apps.medilab.response.ApiResponse;
 import com.apps.medilab.service.DepartmentService;
 
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +31,9 @@ public class DepartmentRestController {
     private DepartmentService departmentService;
 
     @PostMapping
-    public Department create(@RequestBody Department entity) {
-        return departmentService.create(entity);
+    public ResponseEntity<Object> create(@RequestBody DepartmentRequestDTO entity) {
+        Department newDepartment = departmentService.create(entity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newDepartment);
     }
 
     @GetMapping
@@ -36,19 +42,22 @@ public class DepartmentRestController {
     }
 
     @GetMapping("{id}")
-    public Department show(@PathVariable Long id) {
-        return departmentService.show(id);
+    public ResponseEntity<Object> show(@PathVariable Long id) {
+        return ResponseEntity.ok().body(
+            new ApiResponse(200, departmentService.show(id))
+        );
     }
-     
+    
     @DeleteMapping("{id}")
-    public String delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
         departmentService.delete(id);
-        return "ok";
+        return ResponseEntity.ok().body(
+            new ApiResponse(200, Map.of("message", "Department deleted successfully"))
+        );
     }
 
     @PutMapping("{id}")
-    public Department update(@PathVariable Long id, @RequestBody Department department) {
-        return departmentService.update(id, department);
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody DepartmentRequestDTO departmentRequest) throws Exception { // <-- Usa un DTO
+        return ResponseEntity.ok().body(departmentService.update(id, departmentRequest));
     }
-       
 }

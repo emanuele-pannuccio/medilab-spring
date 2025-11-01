@@ -3,6 +3,9 @@ package com.apps.medilab.model;
 import java.sql.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,5 +36,6 @@ public class Patient {
     private String city;
 
     @OneToMany(mappedBy = "patient")
+    @JsonBackReference
     private List<MedicalCase> medicalCases;
 }

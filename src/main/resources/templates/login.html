@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,32 +10,21 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://unpkg.com/@tailwindcss/browser@4.0.9"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
     <style type="text/tailwindcss">
-        @import 'tailwindcss';
-
         @custom-variant dark (&:where(.dark, .dark *));
-
-        @theme {
-        --color-bgContrast: #f9f9f9;
-        }
-
-        @layer theme {
-            .dark {
-                --color-bgContrast: #66C8B6;
-            }
-        }
+      @theme { --color-bgContrast: #f9f9f9; }
+      @layer theme { .dark { --color-bgContrast: #66C8B6; } }
     </style>
 
 </head>
+
 <body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex items-center justify-center transition-colors duration-300">
     <!-- Pulsante per il Toggle del Tema -->
-    <button
-        id="theme-toggle"
+    <button id="theme-toggle"
         class="fixed top-6 right-6 p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all z-10"
-        aria-label="Toggle theme"
-    >
+        aria-label="Toggle theme">
         <!-- Icona Sole (mostrata in dark mode, per passare a light) -->
         <i data-feather="sun" class="w-5 h-5 hidden dark:block"></i>
         <!-- Icona Luna (mostrata in light mode, per passare a dark) -->
@@ -57,42 +47,34 @@
             </div>
 
             <!-- Login Form -->
-            <form class="space-y-6" id="login-form" action="/auth/login" method="POST">
+            <form class="space-y-6" id="login-form" action="/login" method="POST">
                 <!-- User ID -->
                 <div>
                     <!-- Aggiorniamo le classi per light/dark mode -->
-                    <label for="user-id" class=" pointer-events-none select-none block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="user-id"
+                        class=" pointer-events-none select-none block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         ID Utente
                     </label>
-                    <input
-                        type="text"
-                        id="email"
-                        name="email"
+                    <input type="text" id="email" name="email"
                         class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 select-none rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                        placeholder="Inserisci il tuo ID utente"
-                    >
+                        placeholder="Inserisci il tuo ID utente">
                 </div>
 
                 <!-- Password -->
                 <div>
                     <!-- Aggiorniamo le classi per light/dark mode -->
-                    <label for="password" class="block pointer-events-none select-none text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="password"
+                        class="block pointer-events-none select-none text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Password
                     </label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
+                    <input type="password" id="password" name="password"
                         class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                        placeholder="Inserisci la tua password"
-                    >
+                        placeholder="Inserisci la tua password">
                 </div>
 
                 <!-- Login Button (il colore 'primary' funziona bene in entrambi i temi) -->
-                <button
-                    type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-400 cursor-pointer text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
-                >
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-400 cursor-pointer text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
                     Accedi
                 </button>
             </form>
@@ -112,7 +94,7 @@
 
         const themeToggleBtn = document.getElementById('theme-toggle');
 
-        themeToggleBtn.addEventListener('click', function() {
+        themeToggleBtn.addEventListener('click', function () {
             // Controlla se il tema dark è attualmente attivo
             const isDark = document.documentElement.classList.contains('dark');
 
@@ -126,6 +108,46 @@
                 localStorage.theme = 'dark';
             }
         });
+
+        $("#login-form").submit(function(e){
+            e.preventDefault();
+
+            $.ajax({
+                url: "/api/auth/login",
+                method: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    email: $("#email").val(),
+                    password: $("#password").val()
+                })
+            }).done((response)=>{
+                window.localStorage.setItem("token", response.response.token)
+                
+                const $f = $('<form>', { action: '/login', method: 'POST' })
+                .append($('<input>', { type: 'hidden', name: 'email', value: $('#email').val() }))
+                .append($('<input>', { type: 'hidden', name: 'password', value: $('#password').val() }));
+                                
+                $('body').append($f);
+                $f.trigger('submit'); // il server creerà la sessione e set-terà il cookie
+                console.log(response.response.token)
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                let errorMessage = 'Si è verificato un errore di rete o del server.';
+                if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                    errorMessage = jqXHR.responseJSON.message.errors;
+                } else if (errorThrown) {
+                    errorMessage = "Errore".$errorThrown;
+                }
+                Swal.fire({
+                    icon: "error",
+                    title: "Credenziali errate",
+                    html: "Nel caso di più tentativi ti preghiamo di riprovare successivamente."
+                })
+            });
+        })
+
+        
     </script>
 </body>
+
 </html>

@@ -13,12 +13,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Setter @Getter
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter @Setter
     @Column(nullable = false, unique = true)
     private String name;
 }

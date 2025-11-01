@@ -2,11 +2,11 @@ package com.apps.medilab.model;
 
 import java.util.List;
 
-import org.hibernate.annotations.IdGeneratorType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -41,6 +41,8 @@ public class Doctor {
     @JoinColumn(name = "departmentId", nullable = false)
     private Department department;
 
-    @OneToMany(mappedBy = "doctor")
+    @OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<MedicalCase> medicalCases;
+    
 }

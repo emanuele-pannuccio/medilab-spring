@@ -3,7 +3,6 @@ package com.apps.medilab.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,9 +15,9 @@ import com.apps.medilab.model.Department;
 import com.apps.medilab.model.Doctor;
 import com.apps.medilab.repository.DepartmentRepository;
 import com.apps.medilab.repository.DoctorRepository;
-import com.apps.medilab.requests.DepartmentCreationRequest;
-import com.apps.medilab.requests.DoctorCreationRequest;
+import com.apps.medilab.requests.DoctorRequestDTO;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -41,11 +40,11 @@ public class DoctorService implements UserDetailsService {
         throw new UsernameNotFoundException(username);
     }
 
-    public Doctor create(DoctorCreationRequest request) throws Exception{
+    public Doctor create(DoctorRequestDTO request) throws EntityNotFoundException, Exception{
         Department department = departmentRepository.findByName(request.getDepartment());
-            
+        
         if (department == null) {
-            throw new Exception("Department not found: " + request.getDepartment());
+            throw new EntityNotFoundException("Department not found: " + request.getDepartment());
         }
 
         if (doctorRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -65,11 +64,12 @@ public class DoctorService implements UserDetailsService {
         return doctorRepository.findAll();
     }
 
-    public Doctor show(Long id) throws Exception{
-        return doctorRepository.findById(id).orElseThrow(()-> new Exception("Doctor not found"));
+    public Doctor show(Long id) throws EntityNotFoundException{
+        return doctorRepository.findById(id)
+                               .orElseThrow(()-> new EntityNotFoundException("Doctor not found"));
     }
 
-    public Doctor update(Long id, DoctorCreationRequest request) throws Exception {
+    public Doctor update(Long id, DoctorRequestDTO request) throws Exception {
         Doctor doc = show(id);
 
         if (request.getName() != null && !request.getName().isBlank()) {
@@ -98,9 +98,9 @@ public class DoctorService implements UserDetailsService {
     }
 
     
-    public ResponseEntity<Void> delete(Long id) throws Exception {
+    public ResponseEntity<Void> delete(Long id) throws EntityNotFoundException {
         if (!doctorRepository.existsById(id)) {
-            throw new Exception("Doctor not found: id=" + id);
+            throw new EntityNotFoundException("Doctor not found: id=" + id);
         }
         doctorRepository.deleteById(id);
         return ResponseEntity.noContent().build();

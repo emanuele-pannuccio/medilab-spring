@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.apps.medilab.model.Department;
 import com.apps.medilab.repository.DepartmentRepository;
-import com.apps.medilab.requests.DepartmentCreationRequest;
+import com.apps.medilab.requests.DepartmentRequestDTO;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -17,8 +18,7 @@ public class DepartmentService {
     
     private final DepartmentRepository departmentRepository;
 
-
-    public Department create(Department departmentRequest){
+    public Department create(DepartmentRequestDTO departmentRequest){
         Department department = new Department();
         department.setName(departmentRequest.getName());
         return departmentRepository.save(department);
@@ -28,18 +28,19 @@ public class DepartmentService {
         return departmentRepository.findAll();
     }
 
-    public Department show(Long id){
-        return departmentRepository.findById(id).get();
+    public Department show(Long id) {
+        return departmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Department not found with id: " + id));
     }
 
-    public void delete(Long id) throws Exception {
+    public void delete(Long id) {
         if (!departmentRepository.existsById(id)) {
-            throw new Exception("Department not found: id=" + id);
+            throw new EntityNotFoundException("Department not found: id=" + id);
         }
         departmentRepository.deleteById(id);
     }
 
-    public Department update(Long id, Department department){
+    public Department update(Long id, DepartmentRequestDTO department) {
         Department d = show(id);
 
         if(Objects.nonNull(department.getName()) && !"".equalsIgnoreCase(department.getName())){

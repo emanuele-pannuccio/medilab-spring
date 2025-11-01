@@ -1,6 +1,6 @@
 package com.apps.medilab.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,28 +12,26 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-enum MedicalCaseStatus {
-    APERTO,
-    REVISIONE,
-    CHIUSO,
-    ANALISI
-}
+import com.apps.medilab.enums.MedicalCaseStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Getter @Setter
+@Builder
 public class MedicalCase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    
 
     @Column(nullable = false)
-    private Date hospitalization_date;
+    private LocalDateTime hospitalization_date;
 
     @Column(nullable = false)
     private String present_illness_history;
@@ -43,20 +41,22 @@ public class MedicalCase {
 
     private String clinical_evolution;
 
-    private Date discharge_date;
+    private LocalDateTime discharge_date;
 
     private String discharge_description;
 
-    @Column(columnDefinition = "enum('Aperto','Analisi','Revisione','Chiuso')")
+    @Column(nullable = false,columnDefinition = "enum('Aperto','Analisi','Revisione','Chiuso')")
     @Enumerated(EnumType.STRING)
     private MedicalCaseStatus status;
 
     @ManyToOne
     @JoinColumn(name = "doctorId", nullable = false)
+    @JsonManagedReference
     private Doctor doctor;
 
     
     @ManyToOne
     @JoinColumn(name = "patientId", nullable = false)
+    @JsonManagedReference
     private Patient patient;
 }
